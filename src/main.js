@@ -1,59 +1,52 @@
 
 
-import { GUI } from "/scripts/gui.js";
-import { Intro } from "/scripts/stages/intro.js";
-import { Game } from "/scripts/stages/game.js";
-import { Outro } from "/scripts/stages/outro.js";
-import { COLORED_BALLS_IN_BAG1, COLORED_BALLS_IN_BAG2, N_BALLS_IN_BAG, TEST_REPLICATIONS } from "/scripts/constants.js";
+import { GameApp } from "/gameapp/gameapp.js";
+import { AdminApp } from "/adminapp/adminapp.js";
+import { read_default_settings } from "./api.js";
+
+
+
+function clear_screen(){
+    document.getElementById('content_div').innerHTML = ''
+    document.getElementById('button_div').innerHTML = ''
+}
+
+export function run_gameapp(nBalls, nRedBalls, nReplications){
+    clear_screen()
+    const gameapp = new GameApp(nBalls, nRedBalls, nReplications);
+}
+
+function run_adminapp(){
+    clear_screen()
+    const adminapp = new AdminApp();
+}
+
 
 class App {
     constructor(){
-        // INIT GUI
-        this.gui = new GUI(this);
 
-        // INIT STAGES
-        const intro = new Intro(this.gui,this.bags);
-        this.game = new Game(this.gui);
-        const outro = new Outro();
-        this.stages = {0: intro, 1: this.game, 2: outro};
-        this.current_stage = 0;
-        intro.init_stage(this.gui);
+        let text_div = document.getElementById('content_div')
+        let button_div = document.getElementById('button_div') 
 
-        // GATHER DATA
-        this.data = {   'N_total': N_BALLS_IN_BAG, 
-                        'N_colored_1':COLORED_BALLS_IN_BAG1, 
-                        'N_colored_2':COLORED_BALLS_IN_BAG2, 
-                        'correct_bag': new Array(TEST_REPLICATIONS), 
-                        'selected_bag': new Array(TEST_REPLICATIONS),
-                        'data': new Array(TEST_REPLICATIONS).fill("") };
-    }
+        let intro_text = document.createElement('p')
+        intro_text.innerHTML = "Paina 'Pelaa' päästäksesi pelaamaan helmipeliä."
 
-    async run_game() {
-        const ball_value = await this.game.get_ball(this.gui);
-        this.data['data'][this.game.rep]+=String(ball_value);
-    }
-
-    async make_selection_A(){
-        this.data['correct_bag'][this.game.rep] = this.gui.selected_bag;
-        this.data['selected_bag'][this.game.rep] = 0;
-        this.game.make_selection(this.gui, this.data['selected_bag'][this.game.rep], this.data['correct_bag'][this.game.rep]);
-    }
-
-    async make_selection_B(){
-        this.data['correct_bag'][this.game.rep] = this.gui.selected_bag;
-        this.data['selected_bag'][this.game.rep] = 1;
-        this.game.make_selection(this.gui, this.data['selected_bag'][this.game.rep], this.data['correct_bag'][this.game.rep]);
-    }
-
-    async run_program(){
-        var s = this.stages[this.current_stage];
-        s.forward(this.gui);
-        if (s.is_finished && this.current_stage < Object.keys(this.stages).length-1) {
-            await this.current_stage++;
-            this.stages[this.current_stage].init_stage(this.gui,this.data);
+        let play_button = document.createElement('button')
+        play_button.innerHTML = 'Pelaa'
+        play_button.onclick = async function () {
+            let {totalBalls, coloredBalls, nReplications} = await read_default_settings();
+            run_gameapp(totalBalls, coloredBalls, nReplications)
         }
+
+        let admin_button = document.createElement('button')
+        admin_button.innerHTML = 'Admin'
+        admin_button.onclick = run_adminapp
+       
+        text_div.appendChild(intro_text)
+        button_div.appendChild(play_button)
+        button_div.appendChild(admin_button)
+
     }
 }
 
 const main = new App();
-

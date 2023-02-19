@@ -1,6 +1,6 @@
-import { Stage, turn_on_buttons } from "/scripts/stages/tools.js";
-import{ TXT20,TXT21 } from "/scripts/constants.js";
-import { datadump } from "/scripts/helpers.js";
+import { Stage, turn_on_buttons } from "/gameapp/stages/tools.js";
+import{ TXT20,TXT21 } from "/constants/constants.js";
+import { dumpDump } from "/api.js";
 
 export class Outro extends Stage {
     constructor(){
@@ -15,8 +15,8 @@ export class Outro extends Stage {
         this.data = data_dict;
     }
 
-    export_data(){
-        datadump(this.data);
+    async export_data(){
+        await dumpDump(this.data);
     }
 
     async forward(gui) {

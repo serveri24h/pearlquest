@@ -1,4 +1,4 @@
-import {BALL_COLOR_0, BALL_COLOR_1, N_BALLS_IN_BAG} from '/scripts/constants.js';
+import { BALL_COLOR_0, BALL_COLOR_1 } from "../constants/constants.js";
 
 class Ball {
     constructor(x,y,r,color) {
@@ -78,32 +78,51 @@ class WebImg {
 }
 
 class BagImg extends WebImg {
-    constructor(position,ref_size,img_src,colors) {
+    constructor(position, ref_size, img_src, n_balls , colors ) {
         super(position[0],position[1],ref_size*6,ref_size*9,img_src); // RATIO = 2:3
-        this.n_rows = 5;
-        this.n_cols = 4;
+        this.n_rows = Math.ceil( Math.sqrt(n_balls) )
+        this.n_cols = Math.ceil( n_balls/this.n_rows )
+        if (this.n_rows*this.n_cols === n_balls) {
+            this.n_last_row = this.n_cols;
+        } else {
+            this.n_last_row = n_balls % this.n_cols;
+        }
         this.border_width = 5;
-        this.radius = 2*ref_size/5;
+        this.radius = 2*ref_size/this.n_rows;
         this.colors = colors; 
-        this.box_offset = [1.3*ref_size,3.75*ref_size];
+        this.box_offset = [ref_size,3.75*ref_size];
         this.show_content = false;
         this.fps = 60
+    }
+
+    draw_ball(c, pos_x, pos_y, row_index, col_index) {
+        c.beginPath();
+        c.arc(pos_x+(col_index*2+1)*this.radius, pos_y+(row_index*2+1)*this.radius, this.radius, 0, 2 * Math.PI);
+        c.stroke();
+        if (this.colors[(row_index*this.n_cols+col_index)]===1){
+            c.fillStyle = BALL_COLOR_1;
+        } else {
+            c.fillStyle = BALL_COLOR_0;
+        }
+        c.fill();
     }
 
     draw_content(c) {
         let pos_x = this.x+this.box_offset[0];
         let pos_y = this.y+this.box_offset[1]; 
+
         for (let i = 0; i<this.n_rows; i++){
-            for (let j = 0; j<this.n_cols; j++){
-                c.beginPath();
-                c.arc(pos_x+(j*2+1)*this.radius, pos_y+(i*2+1)*this.radius, this.radius, 0, 2 * Math.PI);
-                c.stroke();
-                if (this.colors[(i*this.n_cols+j)]===1){
-                    c.fillStyle = BALL_COLOR_1;
-                } else {
-                    c.fillStyle = BALL_COLOR_0;
+            if (i !== this.n_rows-1 )  {
+                console.log("tässä joo", i, this.n_rows)
+                for (let j = 0; j<this.n_cols; j++){
+                    this.draw_ball(c, pos_x, pos_y, i, j);
                 }
-                c.fill();
+            }
+            else {
+                for (let j = 0; j<this.n_last_row; j++){
+                    console.log("here", this.n_last_row)
+                    this.draw_ball(c, pos_x, pos_y, i, j)
+                }
             }
         }
     }

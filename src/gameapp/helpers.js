@@ -29,25 +29,3 @@ export function sum_of_list(l){
 export function pick_random_idx(n_range){
     return Math.floor(Math.random()*n_range);
 }
-
-export class BagContainer {
-    constructor(n_balls, n_colored_balls){
-        // Balls and Keys
-        this.n_balls = n_balls;
-        this.n_colored_balls = n_colored_balls;
-        this.reset_balls();
-    }
-
-    pop_ball(){
-        let remove_id = Math.floor(Math.random()*this.balls.length);
-        let x = this.balls.splice(remove_id,1)[0];
-        this.removed_balls.push(x);
-        return x;
-    }
-
-    reset_balls(){
-        this.balls = Array(this.n_colored_balls).fill(1).concat(Array(this.n_balls-this.n_colored_balls).fill(0));
-        this.removed_balls = [];
-    }
-
-}

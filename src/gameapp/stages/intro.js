@@ -1,14 +1,14 @@
-import { BagImg } from "/scripts/sprites.js";
-import { Stage, turn_on_buttons } from "/scripts/stages/tools.js";
-import{ TXT00,TXT01,TXT02,TXT03 } from "/scripts/constants.js";
+import { BagImg } from "/gameapp/sprites.js";
+import { Stage, turn_on_buttons } from "/gameapp/stages/tools.js";
+import{ TXT00,TXT01,TXT02,TXT03 } from "/constants/constants.js";
 
 export class Intro extends Stage {
-    constructor(gui){
+    constructor(app){
         super();
-        const bag1_spawn_location = [ -6*gui.h_reference, gui.center_point[1]-gui.h_reference*8]
-        const bag2_spawn_location = [ gui.canvas.width, gui.center_point[1]-gui.h_reference*8]
-        this.bag1 = new BagImg( bag1_spawn_location, gui.h_reference, '/static/img/bag.png', gui.bags[0].balls);    
-        this.bag2 = new BagImg( bag2_spawn_location, gui.h_reference, '/static/img/bag.png', gui.bags[1].balls);
+        const bag1_spawn_location = [ -6*app.gui.h_reference, app.gui.center_point[1]-app.gui.h_reference*8]
+        const bag2_spawn_location = [ app.gui.canvas.width, app.gui.center_point[1]-app.gui.h_reference*8]
+        this.bag1 = new BagImg( bag1_spawn_location, app.gui.h_reference, '/static/img/bag.png', app.data.N_total, app.gui.bags[0].balls);    
+        this.bag2 = new BagImg( bag2_spawn_location, app.gui.h_reference, '/static/img/bag.png', app.data.N_total, app.gui.bags[1].balls);
         this.step = 0;
     }
 

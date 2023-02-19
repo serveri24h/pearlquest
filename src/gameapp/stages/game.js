@@ -1,23 +1,23 @@
-import { Ball, BagImg } from "/scripts/sprites.js";
-import { Stage, turn_on_buttons } from "/scripts/stages/tools.js";
-import { TXT10, TXT11, TXT12, TXT13, TXT14, BALL_COLOR_0, BALL_COLOR_1, TEST_REPLICATIONS } from "/scripts/constants.js";
-import {sum_of_list} from '/scripts/helpers.js'
+import { Ball, BagImg } from "/gameapp/sprites.js";
+import { Stage, turn_on_buttons } from "/gameapp/stages/tools.js";
+import { TXT10, TXT11, TXT12, TXT13, TXT14, BALL_COLOR_0, BALL_COLOR_1} from "/constants/constants.js";
 
 export class Game extends Stage {
-    constructor(gui){
-        super();
+    constructor(app, nReplications){
+        super(app);
         // GENERAL VARIABLES AND SPRITES
+        this.total_replications = nReplications
         this.drawn_balls = [];
         this.trials = 0;
         this.rep = 0;
         this.last_ball = NaN;
-        this.bag_sprite = new BagImg( [gui.w_reference*2,gui.h_reference*8], gui.h_reference, '/static/img/bag.png');
+        this.bag_sprite = new BagImg( [app.gui.w_reference*2, app.gui.h_reference*8], app.gui.h_reference, '/static/img/bag.png');
 
         // COLORS
         this.color_mapping = {0: BALL_COLOR_0, 1: BALL_COLOR_1};
     }
 
-    init_stage(gui,data_dict){
+    init_stage(gui, data_dict){
         turn_on_buttons("btn_next", gui.buttons);
         gui.create_text_field(TXT10);
     }
@@ -81,10 +81,10 @@ export class Game extends Stage {
         } 
         else {
             ctx.clearRect(0,0,1000,1000);
-            if (this.rep >= TEST_REPLICATIONS-1)
+            if (this.rep >= this.total_replications-1)
                 this.is_finished = true;
             else{
-                gui.create_text_field( [TXT14[0],TXT14[1],"","(Suoritettu"+parseInt(this.rep+1)+"/"+parseInt(TEST_REPLICATIONS)+")"]);
+                gui.create_text_field( [TXT14[0],TXT14[1],"","(Suoritettu"+parseInt(this.rep+1)+"/"+parseInt(this.total_replications)+")"]);
                 this.step = 0;
                 this.rep++;
             }

@@ -1,12 +1,13 @@
 extern crate serde_json;
 extern crate serde;
 #[macro_use] extern crate serde_derive;
-use std::{error::Error, fs::File, io::Write};
+use std::{error::Error, fs, fs::File, io::Write};
+use serde::{Serialize, Deserialize};
 
-const PATH: &str = "test.csv";
+const PATH: &str = "tasty.csv";
 
-#[derive(Serialize, Deserialize)]
-struct Data {
+#[derive(Serialize, Deserialize)] 
+struct ExportData {
     N_total: u16,
     N_colored_1: u16,
     N_colored_2: u16,
@@ -16,7 +17,7 @@ struct Data {
 }
 
 
-impl Data {
+impl ExportData {
     fn get_data_as_string(&self) -> String {
         let mut buffer = String::from("\n");
 
@@ -48,17 +49,37 @@ impl Data {
 
 }
 
+
+
 #[tauri::command]
-fn datadump(data: Data) {
-    match write_data(data){
+fn datadump(exportdata: ExportData) -> () { 
+    match write_data(exportdata){
         Ok(())=>{},
         Err(error) => panic!("Somethin failed: {:?}", error),
     };
+    ()
 }
 
-fn write_data(data: Data) -> Result<(), Box<dyn Error>> {
-    let data_str = data.get_data_as_string();
+// remember to call `.manage(MyState::default())`
+
+#[tauri::command]
+fn commandname() -> () {
+    println!("JEEEEEEEEEE");
+    ()
+}
+
+#[tauri::command]
+fn getdata() -> serde_json::Value {
+    let data = fs::read_to_string("config/config.json").unwrap();
+    let v: serde_json::Value = serde_json::from_str(&data).unwrap();
+    v
+}
+
+fn write_data(exportdata: ExportData) -> Result<(), Box<dyn Error>> {
+    //let data_str = exportdata.get_data_as_string();
+
     let mut outf: File;
+
     if !std::path::Path::new(PATH).exists() {
         outf = File::create(PATH)?;
         match write!(outf, "N_total,N_colored_1,N_colored_2,correct_bag,selected_bag,data"){
@@ -70,7 +91,7 @@ fn write_data(data: Data) -> Result<(), Box<dyn Error>> {
         outf = File::options().append(true).open(PATH)?;
     }
     
-    let data_str = data.get_data_as_string();
+    let data_str = exportdata.get_data_as_string();
     
     match write!(outf, "{}", data_str){
         Ok(())=>{},
@@ -81,7 +102,9 @@ fn write_data(data: Data) -> Result<(), Box<dyn Error>> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![datadump])
+        //.invoke_handler(tauri::generate_handler![commandname])
+        //.invoke_handler(tauri::generate_handler![datadump])
+        .invoke_handler(tauri::generate_handler![getdata, datadump])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

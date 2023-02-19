@@ -6,11 +6,6 @@
 //   0 = "BLUE"   ||  1 = "RED" = COLORED BALL
 //   0 = "BAG1"   ||  1 = "BAG2"
 
-export const N_BALLS_IN_BAG = 20;
-export const COLORED_BALLS_IN_BAG1 = 3;     
-export const COLORED_BALLS_IN_BAG2 = 17;    
-export const TEST_REPLICATIONS = 5;
-
 /////////////////////////////////////////////////
 /////             MESSAGES                 //////
 /////////////////////////////////////////////////
@@ -24,9 +19,9 @@ export const TXT00 = [      "Tervetuloa Helmitehtävän pariin!",
 
 export const TXT01 = [      "Kohta näet kaksi pussia",
 				"",
-				"Toisessa pussissa on 3 punaista ja 17 sinistä palloa",
+				"Toisessa pussissa on 15 punaista ja 85 sinistä palloa",
 				"",
-				"Toisessa pussissa on 3 sinistä ja 17 punaista palloa",
+				"Toisessa pussissa on 15 sinistä ja 85 punaista palloa",
 				"",
 				"Määrät ovat siis päinvastaiset"       				];
 

@@ -1,5 +1,26 @@
-import {N_BALLS_IN_BAG, COLORED_BALLS_IN_BAG1, COLORED_BALLS_IN_BAG2, TEST_REPLICATIONS} from '/scripts/constants.js';
-import { BagContainer, pick_random_idx } from '/scripts/helpers.js'; 
+import { pick_random_idx } from '/gameapp/helpers.js'; 
+
+class BagContainer {
+    constructor(n_balls, n_colored_balls){
+        // Balls and Keys
+        this.n_balls = n_balls;
+        this.n_colored_balls = n_colored_balls;
+        this.reset_balls(); 
+    }
+
+    pop_ball(){
+        let remove_id = Math.floor(Math.random()*this.balls.length);
+        let x = this.balls.splice(remove_id,1)[0];
+        this.removed_balls.push(x);
+        return x;
+    }
+
+    reset_balls(){
+        this.balls = Array(this.n_colored_balls).fill(1).concat(Array(this.n_balls-this.n_colored_balls).fill(0));
+        this.removed_balls = [];
+    }
+
+}
 
 export class GUI {
     constructor(app){
@@ -9,17 +30,21 @@ export class GUI {
         // BUTTONS
         this.button_setup(app);
 
+        let nBalls = app.data.N_total
+        let bag1Balls = app.data.N_colored_1
+        let bag2Balls = app.data.N_colored_2
         // INIT BAGS
-        this.bags = {   0: new BagContainer(N_BALLS_IN_BAG,COLORED_BALLS_IN_BAG1), 
-                        1: new BagContainer(N_BALLS_IN_BAG,COLORED_BALLS_IN_BAG2)};
+        this.bags = {   0: new BagContainer(nBalls,bag1Balls), 
+                        1: new BagContainer(nBalls,bag2Balls)
+                    };
         
-        this.bag_content = Math.round(100*COLORED_BALLS_IN_BAG1/N_BALLS_IN_BAG);
+        this.bag_content = Math.round(100*bag1Balls/nBalls);
 
     }
 
     canvas_setup(){
         // CANVAS ELEMENT AND DIMENSIONS
-        const canvas_div = document.getElementById('canvas_div');
+        const canvas_div = document.getElementById('content_div');
         const inner_div = document.createElement('div');
         this.canvas = document.createElement('canvas');
         inner_div.appendChild(this.canvas);
@@ -79,7 +104,7 @@ export class GUI {
         for (let i = 0; i<4; i++){
             this.buttons[btn_ids[i]] = this.create_button(btn_names[i],btn_ids[i],btn_funs[i],disabled[i]);
         }
-    }
+    } 
 
     render_rows_of_text(ctx,text,x,y){
         ctx.textAlign = "center"; 
